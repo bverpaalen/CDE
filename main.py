@@ -1,12 +1,11 @@
 import sys
 import generator
-import parser
-
-amount = 100
+import Parser as parser
+from Algorithms import FlajoletMartin as FM
 
 def main():
     size,amount = parser.parseInput(sys.argv)
     bitArrays = generator.bitstring(size,amount)
-    print(bitArrays)
+    FM.run(bitArrays)
 
 main()
