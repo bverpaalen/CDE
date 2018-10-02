@@ -1,3 +1,5 @@
+#Page 160 (142) book pdf
+
 def run(bitArrays):
     print("Running Flajolet-Martin Algorithm using " + str(len(bitArrays)) + " arrays with " + str(len(bitArrays[0])) + " size bitarrays")
 
