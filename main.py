@@ -12,15 +12,15 @@ from Algorithms import FlajoletMartin as FM
 # m = key values
 
 def main():
-    streams,size,arraysPerStream = parser.parseInput(sys.argv)
+    hashes,size,arraysPerStream = parser.parseInput(sys.argv)
 
     distinctCounts = []
 
-    for i in range(0,streams,1):
+    for i in range(0,hashes,1):
         bitArrays = generator.bitstring(size,arraysPerStream)
         distinctCount = FM.run(bitArrays)
         distinctCounts.append(distinctCount)
-    averageDC = sum(distinctCounts)/streams
+    averageDC = sum(distinctCounts)/hashes
     medianDC = np.median(distinctCounts)
 
     print("Mean: "+str(averageDC))

@@ -1,3 +1,4 @@
+import MathTools as MT
 #Page 160 (142) book pdf
 
 def run(bitArrays):
@@ -7,7 +8,7 @@ def run(bitArrays):
     maxTailArray = None
     for i in range(0,len(bitArrays),1):
         bitArray = bitArrays[i]
-        tailLength = counter(bitArray,0)
+        tailLength = MT.TailCounter(bitArray, 0)
 
         if tailLength > maxTailLength:
             maxTailLength = tailLength
@@ -22,13 +23,3 @@ def run(bitArrays):
     print()
 
     return distinctElements
-
-
-def counter(bitArray,toCount):
-    counter = 0
-    for i in range(0,len(bitArray),1):
-        if bitArray[i] == toCount:
-            counter += 1
-        else:
-            counter = 0
-    return counter
