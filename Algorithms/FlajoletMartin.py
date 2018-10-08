@@ -1,5 +1,5 @@
 import MathTools as MT
-import numpy as np
+import hashlib
 #Page 160 (142) book pdf
 
 def run(bitArrays):
@@ -25,7 +25,7 @@ def run(bitArrays):
 
     return distinctElements
 
-def ProbabilisticCounting(binaries):
+def probabilisticCounting(binaries):
     print("\t\tRunning Flajolet-Martin Algorithm using " + str(len(binaries)) + " stream elements")
 
     # length of the longest tail of 0’s
@@ -47,3 +47,30 @@ def ProbabilisticCounting(binaries):
     print()
 
     return distinctElements
+
+
+"""Counts the number of trailing 0 bits in binary."""
+def trailingZeroes(binary):
+    return len(binary) - len(binary.rstrip('0'))
+
+"""Estimates the number of unique elements in the input set values.
+
+  Arguments:
+    values: An iterator of hashable elements to estimate the cardinality of.
+    k: The number of bits of hash to use as a bucket number; there will be 2**k buckets.
+  """
+def estimateCardinalityByLogLog(values, k, alpha = 0.79402):
+    numBuckets = 2 ** k
+    maxZeroes = [0] * numBuckets
+    for value in values:
+        hash = hashlib.md5(str(value).encode())
+        hexadecimal = hash.hexdigest()
+        asInt = int(hexadecimal, 16)
+        binary = bin(asInt)[2:]
+        bucket = int(binary[-10:], 2) # Mask out the k least significant bits as bucket ID
+        bucketBinary = binary[:-10]
+        maxZeroes[bucket] = max(maxZeroes[bucket], trailingZeroes(bucketBinary))
+
+    meanTrailingZeros = (float(sum(maxZeroes)) / numBuckets)
+    estimate = 2 ** meanTrailingZeros * numBuckets * alpha
+    return int(estimate)
