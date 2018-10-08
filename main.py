@@ -6,6 +6,7 @@ import random
 import generator
 import Parser as parser
 from Algorithms import FlajoletMartin as FM
+import Experiment
 
 #Literatuur notes:
 # n = stream size
@@ -28,6 +29,7 @@ def main(runPc = True, runLogLog = True):
     print("Mean: " + str(averageDC))
     print("Median: " + str(medianDC))'''
 
+    print(hashlib.algorithms_available)
     if(runPc):
         probCounting()
 
@@ -41,7 +43,7 @@ def probCounting():
 
     hashGroups = generator.partitionIntoGroups(hashlib.algorithms_guaranteed)
 
-    numbers = generator.generateRandomIntegers(100000)
+    numbers = generator.generateRandomIntegers(100000, 0, 100)
     trueCount = len(np.unique(numbers))
 
     # numbers = np.random.choice(numbers, 100000) # take sample
@@ -67,27 +69,40 @@ def probCounting():
     printError(trueCount, estimatedCount)
 
 def logLog():
-    print("###############################################################")
-    print("LogLog")
+    print("#########################################################")
+    print("::                       LogLog                        ::")
+    print("#########################################################")
     distincts = []
     estimates = []
-    for i in range(10):
-        print("_______________________________________________")
-        print("Iteration " + str(i+1))
-        numbers = generator.generateRandomIntegers(100000,0, 100000)
-        distinct = len(np.unique(numbers))
-        distincts.append(distinct)
-        estimate = FM.estimateCardinalityByLogLog(numbers, 10)
-        estimates.append(estimate)
-        print("\nActual distinct values: " + str(distinct))
-        print("Estimated distinct values: " + str(estimate))
-        printError(distinct, estimate)
+    setups = Experiment.getSetup(["distinct", "buckets", "memory"])
+    #test = [(name, setup) for name, setup in setups.items() if setup[0] == True]
+    for i, (name, setup) in enumerate(setups.items()):
+        whiteSpace = " " * int(((38 - len(name)) / 2))
+        print("\n=========================================================")
+        print("|"+ whiteSpace + "Running setup: " + name + "..." + whiteSpace + "|")
+        print("=========================================================")
+        for j in range(len(setup)):
+            numRange = setup[j][0]
+            # number of bits to use as a bucket number
+            buckets = setup[j][1]
+            print("Iteration " + str(j+1))
+            print("Number of bits to use as a BUCKET number: " + str(buckets) + " => " + str(2**buckets) + " buckets")
+            numbers = generator.generateRandomIntegers(10**5, 0, numRange)
+            distinct = len(np.unique(numbers))
+            distincts.append(distinct)
+            estimate = FM.estimateCardinalityByLogLog(numbers,buckets)
+            estimates.append(estimate)
+            print("\nActual distinct values: " + str(distinct))
+            print("Estimated distinct values: " + str(estimate))
+            printError(distinct, estimate)
+            print("_________________________________________________________")
+        print("\n")
 
 
 def printError(trueCount, estimatedCount):
     # RAE = abs(true_count - estimated_count)/true_count
     RAE = abs(trueCount - estimatedCount) / trueCount
-    print("\nRelative Approximation Error: " + str(RAE))
+    print("\nRelative Approximation Error: " + str(round(RAE,4)))
 
 main(False)
 

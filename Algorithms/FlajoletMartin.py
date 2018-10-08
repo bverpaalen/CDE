@@ -67,10 +67,15 @@ def estimateCardinalityByLogLog(values, k, alpha = 0.79402):
         hexadecimal = hash.hexdigest()
         asInt = int(hexadecimal, 16)
         binary = bin(asInt)[2:]
-        bucket = int(binary[-10:], 2) # Mask out the k least significant bits as bucket ID
-        bucketBinary = binary[:-10]
+        bucket = int(binary[-k:], 2) # Mask out the k least significant bits as bucket ID
+        bucketBinary = binary[:-k]
         maxZeroes[bucket] = max(maxZeroes[bucket], trailingZeroes(bucketBinary))
 
     meanTrailingZeros = (float(sum(maxZeroes)) / numBuckets)
+
+    # memory in bits
+    memory = sum(maxZero.bit_length() for maxZero in maxZeroes)
+    print("\nRequired memory = " + str(memory) + " bits | " + str(memory/8) + " Bytes | " +  str(round(((memory/8)/1024),4)) + " kB")
+
     estimate = 2 ** meanTrailingZeros * numBuckets * alpha
     return int(estimate)

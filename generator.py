@@ -24,7 +24,7 @@ def generateBitIntegers(amount, bit=32):
     return numpy.array(numbers)
 
 def generateRandomIntegers(size, startRange = 0, endRange=1000):
-    print("\nGenerating random integers between " + str(startRange) + " and " + str(endRange) + "...")
+    print("\nGenerating random " + str(size) + " integers between " + str(startRange) + " and " + str(endRange) + "...")
     numpy.random.seed(123)
     return numpy.random.randint(startRange, endRange, size=size)
 
