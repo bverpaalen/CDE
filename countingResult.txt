@@ -1,0 +1,120 @@
+{'RIPEMD160', 'ripemd160', 'sha1', 'md5', 'blake2s', 'sha3_384', 'DSA-SHA', 'md4', 'whirlpool', 'SHA256', 'dsaWithSHA', 'SHA224', 'sha3_512', 'DSA', 'sha3_256', 'sha', 'shake_128', 'sha224', 'MD4', 'sha512', 'SHA384', 'dsaEncryption', 'SHA1', 'SHA', 'sha3_224', 'shake_256', 'blake2b', 'ecdsa-with-SHA1', 'MD5', 'SHA512', 'sha256', 'sha384'}
+Probabilistic Counting
+
+To use hash functions:
+{'sha3_512', 'sha512', 'sha1', 'md5', 'blake2s', 'shake_128', 'sha3_384', 'sha3_256', 'sha256', 'sha3_224', 'shake_256', 'sha224', 'sha384', 'blake2b'}
+['sha3_512', 'sha512', 'sha1', 'md5', 'blake2s', 'sha3_384', 'sha3_256', 'sha256', 'sha3_224', 'sha224', 'sha384', 'blake2b']
+
+Distinct: 100
+Number of hashes per group: 2
+Distinct elements: 100
+Median of averages: 72.0
+Relative Approximation Error: 0.28
+
+Distinct: 200
+Number of hashes per group: 2
+Distinct elements: 200
+Median of averages: 352.0
+Relative Approximation Error: 0.76
+
+Distinct: 500
+Number of hashes per group: 2
+Distinct elements: 500
+Median of averages: 640.0
+Relative Approximation Error: 0.28
+
+Distinct: 1000
+Number of hashes per group: 2
+Distinct elements: 1000
+Median of averages: 768.0
+Relative Approximation Error: 0.232
+
+Distinct: 10000
+Number of hashes per group: 2
+Distinct elements: 6323
+Median of averages: 8192.0
+Relative Approximation Error: 0.2956
+
+Distinct: 20000
+Number of hashes per group: 2
+Distinct elements: 7908
+Median of averages: 8704.0
+Relative Approximation Error: 0.1007
+
+Distinct: 30000
+Number of hashes per group: 2
+Distinct elements: 8483
+Median of averages: 29184.0
+Relative Approximation Error: 2.4403
+
+Distinct: 40000
+Number of hashes per group: 2
+Distinct elements: 8899
+Median of averages: 9728.0
+Relative Approximation Error: 0.0932
+
+Distinct: 50000
+Number of hashes per group: 2
+Distinct elements: 9098
+Median of averages: 8192.0
+Relative Approximation Error: 0.0996
+
+Distinct: 60000
+Number of hashes per group: 2
+Distinct elements: 9221
+Median of averages: 9216.0
+Relative Approximation Error: 0.0005
+
+Distinct: 70000
+Number of hashes per group: 2
+Distinct elements: 9374
+Median of averages: 9216.0
+Relative Approximation Error: 0.0169
+
+Distinct: 80000
+Number of hashes per group: 2
+Distinct elements: 9431
+Median of averages: 6144.0
+Relative Approximation Error: 0.3485
+
+Distinct: 90000
+Number of hashes per group: 2
+Distinct elements: 9481
+Median of averages: 5632.0
+Relative Approximation Error: 0.406
+
+Distinct: 100000
+Number of hashes per group: 1
+Distinct elements: 9537
+Median of averages: 8192.0
+Relative Approximation Error: 0.141
+
+Distinct: 100000
+Number of hashes per group: 2
+Distinct elements: 9537
+Median of averages: 6144.0
+Relative Approximation Error: 0.3558
+
+Distinct: 100000
+Number of hashes per group: 3
+Distinct elements: 9537
+Median of averages: 7168.0
+Relative Approximation Error: 0.2484
+
+Distinct: 100000
+Number of hashes per group: 4
+Distinct elements: 9537
+Median of averages: 6656.0
+Relative Approximation Error: 0.3021
+
+Distinct: 100000
+Number of hashes per group: 5
+Distinct elements: 9537
+Median of averages: 6144.0
+Relative Approximation Error: 0.3558
+
+Distinct: 100000
+Number of hashes per group: 6
+Distinct elements: 9537
+Median of averages: 7338.666666666667
+Relative Approximation Error: 0.2305

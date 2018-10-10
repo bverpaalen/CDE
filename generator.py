@@ -1,6 +1,8 @@
 import numpy
 import random
 
+genCounter = 1
+
 def bitstring(size,amount):
     bitArrays = []
     for i in range(0,amount,1):
@@ -24,7 +26,7 @@ def generateBitIntegers(amount, bit=32):
     return numpy.array(numbers)
 
 def generateRandomIntegers(size, startRange = 0, endRange=1000):
-    print("\nGenerating random " + str(size) + " integers between " + str(startRange) + " and " + str(endRange) + "...")
+    #print("\nGenerating random " + str(size) + " integers between " + str(startRange) + " and " + str(endRange) + "...")
     numpy.random.seed(123)
     return numpy.random.randint(startRange, endRange, size=size)
 
@@ -38,6 +40,7 @@ def getBinaries(numbers):
 
 def getHashBinaries(numbers, hashFunction):
     binaries = []
+    #print(numbers)
     for index, number in enumerate(numbers):
         hash = hashFunction(str(number).encode())
         hexadecimal = hash.hexdigest()
@@ -49,8 +52,10 @@ def getHashBinaries(numbers, hashFunction):
     return numpy.array(binaries)
 
 def partitionIntoGroups(hashFunctions, sampleSize = 2, combinations = 1):
+    global genCounter
     hashFunctions = sorted(list(hashFunctions))
-    random.seed(123)
+    random.seed(123* genCounter)
+    genCounter += 1
     random.shuffle(hashFunctions)
 
     hashGroups = []

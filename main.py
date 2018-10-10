@@ -14,6 +14,14 @@ import Experiment
 # S = set
 # m = key values
 
+ranges = [10**2,10**3,10**4,10**5,2*10**5,3*10**5,4*10**5,5*10**5,6*10**5,7*10**5,8*10**5,9*10**5,10**6]
+results = {}
+for j in range(len(ranges)):
+    ranger = ranges[j]
+    results.update({ranger:{}})
+    for i in range(1,7):
+        results[ranger].update({i:[]})
+
 def main(runPc = True, runLogLog = True):
     ''''hashes, size, arraysPerStream = parser.parseInput(sys.argv)
 
@@ -29,31 +37,58 @@ def main(runPc = True, runLogLog = True):
     print("Mean: " + str(averageDC))
     print("Median: " + str(medianDC))'''
 
-    print(hashlib.algorithms_available)
+    #print(hashlib.algorithms_available)
     if(runPc):
-        probCounting()
+        experimentCounting(ranger)
 
     if (runLogLog):
         logLog()
 
-def probCounting():
-    print("Probabilistic Counting")
-    print("\nTo use hash functions:")
-    print(hashlib.algorithms_guaranteed)
+def experimentCounting(ranger):
+    #print("Probabilistic Counting")
+    #print("\nTo use hash functions:")
 
-    hashGroups = generator.partitionIntoGroups(hashlib.algorithms_guaranteed)
+    hashes = list(hashlib.algorithms_guaranteed)
 
-    numbers = generator.generateRandomIntegers(100000, 0, 10000)
+    for element in hashes:
+        if element.lower().startswith("shake_"):
+            hashes.remove(element)
+
+
+    #print(hashlib.algorithms_guaranteed)
+    #print(hashes)
+
+    setups = Experiment.getSetup(["distinct","hashes"])
+
+    distincts = setups.get("various numbers of distinct elements")
+    numHashes = setups.get("number of hashes")
+
+    #for i in range(len(distincts)):
+    #    distinct = distincts[i][0]
+    #    calcCounting(distinct,3,hashes)
+
+    for i in range(len(numHashes)):
+        numHash = numHashes[i]
+        calcCounting(ranger,numHash,hashes)
+
+
+def calcCounting(distinct,numHash,hashes):
+    hashGroups = generator.partitionIntoGroups(hashes, numHash)
+
+    numbers = generator.generateRandomIntegers(10 ** 4, 0, distinct)
     trueCount = len(np.unique(numbers))
 
     # numbers = np.random.choice(numbers, 100000) # take sample
     groupAvgs = []
+
+    #print("\nDistinct: " + str(distinct) + "\nNumber of hashes per group: " + str(numHash))
+
     for i, hashGroup in enumerate(hashGroups):
-        print("Hash group " + str(i + 1) + ": " + str(hashGroup))
+        #print("Hash group " + str(i + 1) + ": " + str(hashGroup))
 
         sumCounts = 0
         for hashName in hashGroup:
-            print("\t Running: " + hashName)
+            #print("\t Running: " + hashName)
             hashFunction = getattr(hashlib, hashName)
             binaries = generator.getHashBinaries(numbers, hashFunction)
             distinctCount = FM.probabilisticCounting(binaries)
@@ -62,11 +97,13 @@ def probCounting():
         groupAvg = sumCounts / len(hashGroup)
         groupAvgs.append(groupAvg)
 
-    print("Distinct elements: " + str(trueCount))
+    #print("Distinct elements: " + str(trueCount))
     estimatedCount = np.median(groupAvgs)
-    print("Median of averages: " + str(estimatedCount))
+    #print("Median of averages: " + str(estimatedCount))
 
-    printError(trueCount, estimatedCount)
+    RAE = printError(trueCount, estimatedCount)
+
+    results[distinct][numHash].append(RAE)
 
 def logLog():
     print("#########################################################")
@@ -103,7 +140,16 @@ def logLog():
 def printError(trueCount, estimatedCount):
     # RAE = abs(true_count - estimated_count)/true_count
     RAE = abs(trueCount - estimatedCount) / trueCount
-    print("\nRelative Approximation Error: " + str(round(RAE,4)))
+    #print("Relative Approximation Error: " + str(round(RAE,4)))
+    return RAE
 
-main(False)
+for ranger in ranges:
+    for i in range(10):
+        main(True,False,ranger)
 
+for ranger in ranges:
+    print(ranger)
+    for i in range(1,len(results[ranger])+1):
+        RAE = sum(results[ranger][i]) / len(results[ranger][i])
+        print(str(RAE))
+    print()
