@@ -14,6 +14,11 @@ import Experiment
 # S = set
 # m = key values
 
+results = {}
+
+for i in range(1,7):
+    results.update({i:[]})
+
 def main(runPc = True, runLogLog = True):
     ''''hashes, size, arraysPerStream = parser.parseInput(sys.argv)
 
@@ -55,13 +60,13 @@ def experimentCounting():
     distincts = setups.get("various numbers of distinct elements")
     numHashes = setups.get("number of hashes")
 
-    for i in range(len(distincts)):
-        distinct = distincts[i][0]
-        calcCounting(distinct,2,hashes)
+    #for i in range(len(distincts)):
+    #    distinct = distincts[i][0]
+    #    calcCounting(distinct,3,hashes)
 
     for i in range(len(numHashes)):
         numHash = numHashes[i]
-        calcCounting(60000,numHash,hashes)
+        calcCounting(5000,numHash,hashes)
 
 
 def calcCounting(distinct,numHash,hashes):
@@ -93,8 +98,9 @@ def calcCounting(distinct,numHash,hashes):
     estimatedCount = np.median(groupAvgs)
     print("Median of averages: " + str(estimatedCount))
 
-    printError(trueCount, estimatedCount)
+    RAE = printError(trueCount, estimatedCount)
 
+    results[numHash].append(RAE)
 
 def logLog():
     print("#########################################################")
@@ -131,6 +137,11 @@ def printError(trueCount, estimatedCount):
     # RAE = abs(true_count - estimated_count)/true_count
     RAE = abs(trueCount - estimatedCount) / trueCount
     print("Relative Approximation Error: " + str(round(RAE,4)))
+    return RAE
 
-main(True,False)
+for i in range(100):
+    main(True,False)
 
+for i in range(1,len(results)+1):
+    RAE = sum(results[i]) / len(results[i])
+    print(str(RAE))

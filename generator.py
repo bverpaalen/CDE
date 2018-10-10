@@ -1,6 +1,8 @@
 import numpy
 import random
 
+genCounter = 1
+
 def bitstring(size,amount):
     bitArrays = []
     for i in range(0,amount,1):
@@ -50,8 +52,10 @@ def getHashBinaries(numbers, hashFunction):
     return numpy.array(binaries)
 
 def partitionIntoGroups(hashFunctions, sampleSize = 2, combinations = 1):
+    global genCounter
     hashFunctions = sorted(list(hashFunctions))
-    random.seed(123)
+    random.seed(123* genCounter)
+    genCounter += 1
     random.shuffle(hashFunctions)
 
     hashGroups = []
