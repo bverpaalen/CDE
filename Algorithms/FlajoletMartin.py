@@ -26,7 +26,7 @@ def run(bitArrays):
     return distinctElements
 
 def probabilisticCounting(binaries):
-    print("\t\tRunning Flajolet-Martin Algorithm using " + str(len(binaries)) + " stream elements")
+    #print("\t\tRunning Flajolet-Martin Algorithm using " + str(len(binaries)) + " stream elements")
 
     # length of the longest tail of 0’s
     maxTailLength = -1
@@ -40,11 +40,11 @@ def probabilisticCounting(binaries):
 
     distinctElements = 2**maxTailLength
 
-    print("\t\tMax tail length: "+str(maxTailLength))
+    '''print("\t\tMax tail length: "+str(maxTailLength))
     print("\t\tFrom element: "+str(maxTailBinary))
     print("\t\tDistinct Elements: "+str(distinctElements))
     print("\t\tFlajolet-Martin Algorithm done")
-    print()
+    print()'''
 
     return distinctElements
 

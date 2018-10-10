@@ -31,29 +31,56 @@ def main(runPc = True, runLogLog = True):
 
     print(hashlib.algorithms_available)
     if(runPc):
-        probCounting()
+        experimentCounting()
 
     if (runLogLog):
         logLog()
 
-def probCounting():
+def experimentCounting():
     print("Probabilistic Counting")
     print("\nTo use hash functions:")
+
+    hashes = list(hashlib.algorithms_guaranteed)
+
+    for element in hashes:
+        if element.lower().startswith("shake_"):
+            hashes.remove(element)
+
+
     print(hashlib.algorithms_guaranteed)
+    print(hashes)
 
-    hashGroups = generator.partitionIntoGroups(hashlib.algorithms_guaranteed)
+    setups = Experiment.getSetup(["distinct","hashes"])
 
-    numbers = generator.generateRandomIntegers(100000, 0, 100)
+    distincts = setups.get("various numbers of distinct elements")
+    numHashes = setups.get("number of hashes")
+
+    for i in range(len(distincts)):
+        distinct = distincts[i][0]
+        calcCounting(distinct,2,hashes)
+
+    for i in range(len(numHashes)):
+        numHash = numHashes[i]
+        calcCounting(60000,numHash,hashes)
+
+
+def calcCounting(distinct,numHash,hashes):
+    hashGroups = generator.partitionIntoGroups(hashes, numHash)
+
+    numbers = generator.generateRandomIntegers(10 ** 4, 0, distinct)
     trueCount = len(np.unique(numbers))
 
     # numbers = np.random.choice(numbers, 100000) # take sample
     groupAvgs = []
+
+    print("\nDistinct: " + str(distinct) + "\nNumber of hashes per group: " + str(numHash))
+
     for i, hashGroup in enumerate(hashGroups):
-        print("Hash group " + str(i + 1) + ": " + str(hashGroup))
+        #print("Hash group " + str(i + 1) + ": " + str(hashGroup))
 
         sumCounts = 0
         for hashName in hashGroup:
-            print("\t Running: " + hashName)
+            #print("\t Running: " + hashName)
             hashFunction = getattr(hashlib, hashName)
             binaries = generator.getHashBinaries(numbers, hashFunction)
             distinctCount = FM.probabilisticCounting(binaries)
@@ -67,6 +94,7 @@ def probCounting():
     print("Median of averages: " + str(estimatedCount))
 
     printError(trueCount, estimatedCount)
+
 
 def logLog():
     print("#########################################################")
@@ -102,7 +130,7 @@ def logLog():
 def printError(trueCount, estimatedCount):
     # RAE = abs(true_count - estimated_count)/true_count
     RAE = abs(trueCount - estimatedCount) / trueCount
-    print("\nRelative Approximation Error: " + str(round(RAE,4)))
+    print("Relative Approximation Error: " + str(round(RAE,4)))
 
-main(False)
+main(True,False)
 
