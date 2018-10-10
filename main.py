@@ -22,7 +22,7 @@ for j in range(len(ranges)):
     for i in range(1,7):
         results[ranger].update({i:[]})
 
-def main(runPc = True, runLogLog = True):
+def main(runPc = True, runLogLog = True,ranger=10000):
     ''''hashes, size, arraysPerStream = parser.parseInput(sys.argv)
 
     distinctCounts = []
@@ -153,3 +153,5 @@ for ranger in ranges:
         RAE = sum(results[ranger][i]) / len(results[ranger][i])
         print(str(RAE))
     print()
+
+main(False,False,None)

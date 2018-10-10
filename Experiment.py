@@ -16,7 +16,8 @@ def getSetup(names):
                          [range, 6], [n, range, 7], [n, range, 8], [n, range, 9],[range, k]]},
         "memory": {"required memory":
                        [[10**3, range, k], [lown, range, k], [lown*2, range, k], [lown*3, range, k], [lown*4, range, k], [lown*5, range, k], [lown*6, range, k],
-                        [lown*7, range, k],[lown*8, range, k], [lown*9, range, k], [n,range, k], [lown*11,range, k], [lown*12,range, k]]}
+                        [lown*7, range, k],[lown*8, range, k], [lown*9, range, k], [n,range, k], [lown*11,range, k], [lown*12,range, k]]},
+        "hashes": {"number of hashes": [1, 2, 3, 4, 5, 6]}
     }
 
     for name in names:
