@@ -1,5 +1,6 @@
 import MathTools as MT
 import hashlib
+import numpy as np
 #Page 160 (142) book pdf
 
 def run(bitArrays):
@@ -71,11 +72,17 @@ def estimateCardinalityByLogLog(values, k, alpha = 0.79402):
         bucketBinary = binary[:-k]
         maxZeroes[bucket] = max(maxZeroes[bucket], trailingZeroes(bucketBinary))
 
+    maxZeroes = np.trim_zeros(maxZeroes)
     meanTrailingZeros = (float(sum(maxZeroes)) / numBuckets)
 
-    # memory in bits
-    memory = sum(maxZero.bit_length() for maxZero in maxZeroes)
-    print("\nRequired memory = " + str(memory) + " bits | " + str(memory/8) + " Bytes | " +  str(round(((memory/8)/1024),4)) + " kB")
+    calculateMemory(maxZeroes)
 
     estimate = 2 ** meanTrailingZeros * numBuckets * alpha
     return int(estimate)
+
+# memory in bits, Bytes and kiloBytes
+def calculateMemory(maxZeroes):
+    memory = sum(maxZero.bit_length() for maxZero in maxZeroes)
+
+    print("\nRequired memory = " + str(memory) + " bits | " + str(memory / 8) + " Bytes | " + str(
+        round(((memory / 8) / 1024), 4)) + " kB")

@@ -43,7 +43,7 @@ def probCounting():
 
     hashGroups = generator.partitionIntoGroups(hashlib.algorithms_guaranteed)
 
-    numbers = generator.generateRandomIntegers(100000, 0, 100)
+    numbers = generator.generateRandomIntegers(100000, 0, 10000)
     trueCount = len(np.unique(numbers))
 
     # numbers = np.random.choice(numbers, 100000) # take sample
@@ -74,7 +74,7 @@ def logLog():
     print("#########################################################")
     distincts = []
     estimates = []
-    setups = Experiment.getSetup(["distinct", "buckets", "memory"])
+    setups = Experiment.getSetup(["memory"])
     #test = [(name, setup) for name, setup in setups.items() if setup[0] == True]
     for i, (name, setup) in enumerate(setups.items()):
         whiteSpace = " " * int(((38 - len(name)) / 2))
@@ -82,12 +82,13 @@ def logLog():
         print("|"+ whiteSpace + "Running setup: " + name + "..." + whiteSpace + "|")
         print("=========================================================")
         for j in range(len(setup)):
-            numRange = setup[j][0]
+            numRange = setup[j][1]
             # number of bits to use as a bucket number
-            buckets = setup[j][1]
+            buckets = setup[j][2]
             print("Iteration " + str(j+1))
             print("Number of bits to use as a BUCKET number: " + str(buckets) + " => " + str(2**buckets) + " buckets")
-            numbers = generator.generateRandomIntegers(10**5, 0, numRange)
+            n = setup[j][0]
+            numbers = generator.generateRandomIntegers(n, 0, numRange)
             distinct = len(np.unique(numbers))
             distincts.append(distinct)
             estimate = FM.estimateCardinalityByLogLog(numbers,buckets)
