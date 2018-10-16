@@ -106,44 +106,63 @@ def calcCounting(distinct,numHash,hashes):
     results[distinct][numHash].append(RAE)
 
 def logLog():
-    print("#########################################################")
-    print("::                       LogLog                        ::")
-    print("#########################################################")
-    distincts = []
-    estimates = []
-    setups = Experiment.getSetup(["memory"])
+    print("################################################################")
+    print("::                          LogLog                            ::")
+    print("################################################################")
+    setups = Experiment.getSetup(["distinct"])
     #test = [(name, setup) for name, setup in setups.items() if setup[0] == True]
     for i, (name, setup) in enumerate(setups.items()):
-        whiteSpace = " " * int(((38 - len(name)) / 2))
-        print("\n=========================================================")
-        print("|"+ whiteSpace + "Running setup: " + name + "..." + whiteSpace + "|")
-        print("=========================================================")
+        whiteSpace = " " * int(((44 - len(name)) / 2))
+        print("\n================================================================")
+        print("|"+ whiteSpace + "Running setup: " + name + "..." + whiteSpace + " |")
+        print("================================================================")
         for j in range(len(setup)):
-            numRange = setup[j][1]
-            # number of bits to use as a bucket number
-            buckets = setup[j][2]
-            print("Iteration " + str(j+1))
-            print("Number of bits to use as a BUCKET number: " + str(buckets) + " => " + str(2**buckets) + " buckets")
-            n = setup[j][0]
-            numbers = generator.generateRandomIntegers(n, 0, numRange)
-            distinct = len(np.unique(numbers))
-            distincts.append(distinct)
-            estimate = FM.estimateCardinalityByLogLog(numbers,buckets)
-            estimates.append(estimate)
-            print("\nActual distinct values: " + str(distinct))
-            print("Estimated distinct values: " + str(estimate))
-            printError(distinct, estimate)
-            print("_________________________________________________________")
-        print("\n")
+            print("EXPERIMENT " + str(j + 1) + "\n")
+            sumError = 0
+            sumMemory = 0
+            distincts = []
+            estimates = []
+            for l in range(10):
+                numDistincts = setup[j][1]
+                # number of bits to use as a bucket number
+                buckets = setup[j][2]
+                print("\tIteration " + str(l+1))
+                print("\tNumber of bits to use as a BUCKET number: " + str(buckets) + " => " + str(2**buckets) + " buckets")
+                n = setup[j][0]
+                #numbers = generator.generateRandomIntegers(n, 0, numRange, True)
+                numbers = generator.generateRandomBitIntegers(n, numDistincts)
+                distinct = len(np.unique(numbers))
+                distincts.append(distinct)
+                result = FM.estimateCardinalityByLogLog(numbers,buckets)
+                estimate = result.get("estimate")
+                sumMemory += result.get("memory")
+                estimates.append(estimate)
+                print("\n\tActual distinct values: " + str(distinct))
+                print("\tEstimated distinct values: " + str(estimate))
+                sumError += printError(distinct, estimate, True)
+                print("________________________________________________________________")
 
+            printReport(sumError, sumMemory, distincts, estimates, 10)
+            generator.resetGenCounter()
+            print("________________________________________________________________\n")
 
-def printError(trueCount, estimatedCount):
+def printError(trueCount, estimatedCount, printInfo = False):
     # RAE = abs(true_count - estimated_count)/true_count
     RAE = abs(trueCount - estimatedCount) / trueCount
-    #print("Relative Approximation Error: " + str(round(RAE,4)))
+    if printInfo:
+        print("\tRelative Approximation Error: " + str(round(RAE,4)))
     return RAE
 
-for ranger in ranges:
+def printReport(sumError, sumMemory, distincts, estimates, length):
+    print("Mean Actual distinct values: " + str(int(round(np.mean(distincts)))))
+    print("Mean Estimated distinct values: " + str(int(round(np.mean(estimates)))))
+    meanError = sumError / length
+    meanMemory = sumMemory / length
+    print("Mean Relative Approximation Error: " + str(round(meanError,4)))
+    print("Mean Memory Usage: " + str(meanMemory) + " bits | " + str(meanMemory / 8) + " Bytes | " + str(
+        round(((meanMemory / 8) / 1024), 4)) + " kB")
+
+'''for ranger in ranges:
     for i in range(10):
         main(True,False,ranger)
 
@@ -152,6 +171,6 @@ for ranger in ranges:
     for i in range(1,len(results[ranger])+1):
         RAE = sum(results[ranger][i]) / len(results[ranger][i])
         print(str(RAE))
-    print()
+    print()'''
 
-main(False,False,None)
+main(False,True,None)

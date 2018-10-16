@@ -1,14 +1,19 @@
 import MathTools as MT
 import hashlib
 import numpy as np
-#Page 160 (142) book pdf
+import math
+import scipy.integrate as integrate
+
+
+# Page 160 (142) book pdf
 
 def run(bitArrays):
-    print("Running Flajolet-Martin Algorithm using " + str(len(bitArrays)) + " arrays with " + str(len(bitArrays[0])) + " size bitarrays")
+    print("Running Flajolet-Martin Algorithm using " + str(len(bitArrays)) + " arrays with " + str(
+        len(bitArrays[0])) + " size bitarrays")
 
     maxTailLength = -1
     maxTailArray = None
-    for i in range(0,len(bitArrays),1):
+    for i in range(0, len(bitArrays), 1):
         bitArray = bitArrays[i]
         tailLength = MT.TailCounter(bitArray, 0)
 
@@ -16,18 +21,19 @@ def run(bitArrays):
             maxTailLength = tailLength
             maxTailArray = bitArray
 
-    distinctElements = 2**maxTailLength
+    distinctElements = 2 ** maxTailLength
 
-    print("Max tail length: "+str(maxTailLength))
-    print("From array: "+str(maxTailArray))
-    print("Distinct Elements: "+str(distinctElements))
+    print("Max tail length: " + str(maxTailLength))
+    print("From array: " + str(maxTailArray))
+    print("Distinct Elements: " + str(distinctElements))
     print("Flajolet-Martin Algorithm done")
     print()
 
     return distinctElements
 
+
 def probabilisticCounting(binaries):
-    #print("\t\tRunning Flajolet-Martin Algorithm using " + str(len(binaries)) + " stream elements")
+    # print("\t\tRunning Flajolet-Martin Algorithm using " + str(len(binaries)) + " stream elements")
 
     # length of the longest tail of 0’s
     maxTailLength = -1
@@ -39,7 +45,7 @@ def probabilisticCounting(binaries):
             maxTailLength = tailLength
             maxTailBinary = binary
 
-    distinctElements = 2**maxTailLength
+    distinctElements = 2 ** maxTailLength
 
     '''print("\t\tMax tail length: "+str(maxTailLength))
     print("\t\tFrom element: "+str(maxTailBinary))
@@ -49,40 +55,46 @@ def probabilisticCounting(binaries):
 
     return distinctElements
 
-
-"""Counts the number of trailing 0 bits in binary."""
 def trailingZeroes(binary):
     return len(binary) - len(binary.rstrip('0'))
 
-"""Estimates the number of unique elements in the input set values.
-
-  Arguments:
-    values: An iterator of hashable elements to estimate the cardinality of.
-    k: The number of bits of hash to use as a bucket number; there will be 2**k buckets.
-  """
-def estimateCardinalityByLogLog(values, k, alpha = 0.79402):
+def estimateCardinalityByLogLog(values, k=4):
     numBuckets = 2 ** k
+    alpha = getAlpha(numBuckets)
     maxZeroes = [0] * numBuckets
     for value in values:
         hash = hashlib.md5(str(value).encode())
         hexadecimal = hash.hexdigest()
         asInt = int(hexadecimal, 16)
         binary = bin(asInt)[2:]
-        bucket = int(binary[-k:], 2) # Mask out the k least significant bits as bucket ID
+        bucket = int(binary[-k:], 2)  # Mask out the k least significant bits as bucket ID
         bucketBinary = binary[:-k]
         maxZeroes[bucket] = max(maxZeroes[bucket], trailingZeroes(bucketBinary))
 
     maxZeroes = np.trim_zeros(maxZeroes)
     meanTrailingZeros = (float(sum(maxZeroes)) / numBuckets)
 
-    calculateMemory(maxZeroes)
+    memory = calculateMemory(maxZeroes)
 
     estimate = 2 ** meanTrailingZeros * numBuckets * alpha
-    return int(estimate)
+    return {"estimate": int(estimate), "memory": memory}
+
 
 # memory in bits, Bytes and kiloBytes
 def calculateMemory(maxZeroes):
     memory = sum(maxZero.bit_length() for maxZero in maxZeroes)
 
-    print("\nRequired memory = " + str(memory) + " bits | " + str(memory / 8) + " Bytes | " + str(
+    print("\n\tRequired memory = " + str(memory) + " bits | " + str(memory / 8) + " Bytes | " + str(
         round(((memory / 8) / 1024), 4)) + " kB")
+    return memory
+
+
+def getAlpha(m):
+    gamma = getGamma(-1 / m)
+    alpha_m = (gamma * ((2 ** (-1 / m) - 1) / math.log(2))) ** -m
+    print("\t" + str(alpha_m))
+    return alpha_m
+
+
+def getGamma(s):
+    return (1 / s) * integrate.quad(lambda x: (math.e ** -x) * x ** s, 0, math.inf)[0]
